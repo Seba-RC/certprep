@@ -18,8 +18,12 @@ Question block format (blocks start with '### '):
 
   * '+' marks a correct option, '-' an incorrect one. Two or more '+' => multi-select,
     and the stem must say "(Choose two.)" / "(Choose three.)" matching the count.
+    Spanish banks may write "(Elige dos.)" / "(Elige tres.)" instead.
   * d1/d2/d3 = difficulty (easy/medium/hard).
   * Lines starting with '//' are comments.
+  * The stem may include a fenced code block (```c ... ```). Lines inside the fence
+    keep their line breaks and indentation; the app renders it as a code block.
+    Use `backticks` for inline code in stems, options, feedback and takeaways.
 
 Usage:
     python3 scripts/build_bank.py            # build every cert in bank-src/
@@ -38,8 +42,8 @@ SRC = ROOT / "bank-src"
 OUT = ROOT / "web" / "banks"
 
 HEADER = re.compile(r"^###\s+(?P<id>[a-z0-9-]+)\s+\[(?P<obj>\d+\.\d+)\]\s+d(?P<diff>[123])(?P<tags>(\s+#[a-z0-9-]+)*)\s*$")
-CHOOSE = re.compile(r"\(Choose (two|three|four)\.\)")
-WORDS = {"two": 2, "three": 3, "four": 4}
+CHOOSE = re.compile(r"\((?:Choose|Elige) (two|three|four|dos|tres|cuatro)\.\)")
+WORDS = {"two": 2, "three": 3, "four": 4, "dos": 2, "tres": 3, "cuatro": 4}
 LETTERS = "ABCDEFGH"
 
 
@@ -74,8 +78,22 @@ def parse_block(block, path, lineno):
     if not m:
         raise BankError(f"{where}: bad header line: {block[0]!r}")
     stem, options, takeaway = [], [], None
+    code, in_code = [], False
     for line in block[1:]:
         s = line.strip()
+        if s.startswith("```"):
+            if options:
+                raise BankError(f"{where}: code blocks are only allowed in the stem")
+            if in_code:
+                code.append("```")
+                stem.append("\n".join(code))
+                code, in_code = [], False
+            else:
+                code, in_code = [s], True
+            continue
+        if in_code:
+            code.append(line.rstrip())
+            continue
         if not s:
             continue
         if s[:2] in ("+ ", "- "):
@@ -91,7 +109,16 @@ def parse_block(block, path, lineno):
                 options[-1]["feedback"] += " " + s
             else:
                 stem.append(s)
-    stem_text = " ".join(stem).strip()
+    if in_code:
+        raise BankError(f"{where}: unclosed ``` code block")
+    # Prose lines are joined with spaces; code blocks keep their own lines.
+    parts = []
+    for chunk in stem:
+        if chunk.startswith("```"):
+            parts.append("\n" + chunk + "\n")
+        else:
+            parts.append((" " if parts and not parts[-1].endswith("\n") else "") + chunk)
+    stem_text = "".join(parts).strip()
     if not stem_text:
         raise BankError(f"{where}: empty stem")
     if not 3 <= len(options) <= 6:

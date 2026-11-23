@@ -1,0 +1,283 @@
+{
+  "id": "sd-udd",
+  "name": "Sistemas Distribuidos — Taller de Ciencia de Redes",
+  "shortName": "Sistemas Distribuidos",
+  "vendor": "ICIIT · UDD",
+  "level": "Examen",
+  "accent": "#0f8a7a",
+  "description": "Preguntas de práctica en español para el examen de Sistemas Distribuidos (60 preguntas de selección múltiple, 120 min). Basadas en el temario del examen y en las Unidades 1 y 2 del curso.",
+  "examGuideUrl": "",
+  "examGuideVersion": "Temario del examen 2026",
+  "searchHint": "Prueba: zombie, TIME_WAIT, quórum, Kafka, sd-1201",
+  "codeMarker": "[código]",
+  "exam": {
+    "questions": 60,
+    "durationMinutes": 120,
+    "passPercent": 60,
+    "passNote": "60% corresponde a la nota 4,0 con exigencia del 60%, la más común en Chile. Si tu curso usa otra exigencia, tómalo solo como referencia.",
+    "format": "60 preguntas de selección múltiple en 120 minutos."
+  },
+  "disclaimer": "Preguntas de práctica originales, escritas a partir del temario del examen y del material de las Unidades 1 y 2 del curso. No son preguntas reales del examen.",
+  "domains": [
+    {
+      "id": "1",
+      "name": "Programación POSIX en C: fork(), pipes y señales",
+      "weight": 25,
+      "objectives": [
+        {
+          "id": "1.1",
+          "name": "fork(), herencia y waitpid()",
+          "refs": [
+            {"title": "fork(2)", "url": "https://man7.org/linux/man-pages/man2/fork.2.html"},
+            {"title": "wait(2) y waitpid()", "url": "https://man7.org/linux/man-pages/man2/wait.2.html"},
+            {"title": "Beej's Guide to Unix IPC", "url": "https://beej.us/guide/bgipc/"}
+          ]
+        },
+        {
+          "id": "1.2",
+          "name": "Procesos zombie y SIGCHLD",
+          "refs": [
+            {"title": "wait(2): zombies y SIGCHLD", "url": "https://man7.org/linux/man-pages/man2/wait.2.html"},
+            {"title": "sigaction(2)", "url": "https://man7.org/linux/man-pages/man2/sigaction.2.html"},
+            {"title": "signal(7)", "url": "https://man7.org/linux/man-pages/man7/signal.7.html"}
+          ]
+        },
+        {
+          "id": "1.3",
+          "name": "Pipes, FIFOs y socketpair()",
+          "refs": [
+            {"title": "pipe(7): PIPE_BUF y atomicidad", "url": "https://man7.org/linux/man-pages/man7/pipe.7.html"},
+            {"title": "pipe(2)", "url": "https://man7.org/linux/man-pages/man2/pipe.2.html"},
+            {"title": "fifo(7)", "url": "https://man7.org/linux/man-pages/man7/fifo.7.html"},
+            {"title": "socketpair(2)", "url": "https://man7.org/linux/man-pages/man2/socketpair.2.html"}
+          ]
+        },
+        {
+          "id": "1.4",
+          "name": "Señales y pipes: SIGPIPE y bloqueo",
+          "refs": [
+            {"title": "pipe(7): SIGPIPE y EPIPE", "url": "https://man7.org/linux/man-pages/man7/pipe.7.html"},
+            {"title": "signal(7)", "url": "https://man7.org/linux/man-pages/man7/signal.7.html"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Sockets TCP en C",
+      "weight": 13,
+      "objectives": [
+        {
+          "id": "2.1",
+          "name": "Secuencia del servidor y tipos de socket",
+          "refs": [
+            {"title": "Beej's Guide to Network Programming", "url": "https://beej.us/guide/bgnet/"},
+            {"title": "listen(2): backlog", "url": "https://man7.org/linux/man-pages/man2/listen.2.html"},
+            {"title": "accept(2)", "url": "https://man7.org/linux/man-pages/man2/accept.2.html"},
+            {"title": "unix(7): AF_LOCAL / AF_UNIX", "url": "https://man7.org/linux/man-pages/man7/unix.7.html"}
+          ]
+        },
+        {
+          "id": "2.2",
+          "name": "Cierre de conexión y estados TCP",
+          "refs": [
+            {"title": "tcp(7)", "url": "https://man7.org/linux/man-pages/man7/tcp.7.html"},
+            {"title": "recv(2)", "url": "https://man7.org/linux/man-pages/man2/recv.2.html"},
+            {"title": "socket(7): SO_REUSEADDR", "url": "https://man7.org/linux/man-pages/man7/socket.7.html"}
+          ]
+        },
+        {
+          "id": "2.3",
+          "name": "Servidor concurrente con fork()",
+          "refs": [
+            {"title": "Beej: servidor con fork()", "url": "https://beej.us/guide/bgnet/"},
+            {"title": "fork(2)", "url": "https://man7.org/linux/man-pages/man2/fork.2.html"}
+          ]
+        },
+        {
+          "id": "2.4",
+          "name": "Parsing sobre TCP y funciones auxiliares",
+          "refs": [
+            {"title": "recv(2)", "url": "https://man7.org/linux/man-pages/man2/recv.2.html"},
+            {"title": "sscanf(3)", "url": "https://man7.org/linux/man-pages/man3/sscanf.3.html"},
+            {"title": "ctime(3)", "url": "https://man7.org/linux/man-pages/man3/ctime.3.html"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Consenso y algoritmo Raft",
+      "weight": 13,
+      "objectives": [
+        {
+          "id": "3.1",
+          "name": "Consenso, FLP y visión general de Raft",
+          "refs": [
+            {"title": "Raft (sitio oficial)", "url": "https://raft.github.io/"},
+            {"title": "Paper de Raft (Ongaro y Ousterhout)", "url": "https://raft.github.io/raft.pdf"}
+          ]
+        },
+        {
+          "id": "3.2",
+          "name": "Terms, elección de líder y heartbeats",
+          "refs": [
+            {"title": "Paper de Raft, sección 5.2", "url": "https://raft.github.io/raft.pdf"},
+            {"title": "RaftScope (simulador)", "url": "https://raft.github.io/raftscope/index.html"}
+          ]
+        },
+        {
+          "id": "3.3",
+          "name": "Replicación de log, quórum y safety",
+          "refs": [
+            {"title": "Paper de Raft, secciones 5.3 y 5.4", "url": "https://raft.github.io/raft.pdf"}
+          ]
+        },
+        {
+          "id": "3.4",
+          "name": "Particiones de red en Raft",
+          "refs": [
+            {"title": "RaftScope (simulador)", "url": "https://raft.github.io/raftscope/index.html"},
+            {"title": "Paper de Raft", "url": "https://raft.github.io/raft.pdf"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Consistencia, replicación y tolerancia a fallos",
+      "weight": 12,
+      "objectives": [
+        {
+          "id": "4.1",
+          "name": "CAP, PACELC y modelos de consistencia",
+          "refs": [
+            {"title": "Brewer: CAP Twelve Years Later", "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/"},
+            {"title": "Jepsen: modelos de consistencia", "url": "https://jepsen.io/consistency"},
+            {"title": "Teorema PACELC", "url": "https://en.wikipedia.org/wiki/PACELC_theorem"}
+          ]
+        },
+        {
+          "id": "4.2",
+          "name": "Replicación, quórums NWR y 2PC",
+          "refs": [
+            {"title": "Paper de Amazon Dynamo", "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"},
+            {"title": "Two-phase commit", "url": "https://en.wikipedia.org/wiki/Two-phase_commit_protocol"}
+          ]
+        },
+        {
+          "id": "4.3",
+          "name": "Conflictos, detección de fallos y recuperación",
+          "refs": [
+            {"title": "Redis Sentinel", "url": "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/"},
+            {"title": "Paper de Amazon Dynamo", "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Colas de mensajes y middleware",
+      "weight": 17,
+      "objectives": [
+        {
+          "id": "5.1",
+          "name": "Semánticas de entrega, idempotencia y deduplicación",
+          "refs": [
+            {"title": "Kafka: semánticas de entrega", "url": "https://kafka.apache.org/documentation/#semantics"},
+            {"title": "RabbitMQ: confirmaciones y acks", "url": "https://www.rabbitmq.com/docs/confirms"}
+          ]
+        },
+        {
+          "id": "5.2",
+          "name": "Kafka: particiones, orden y consumer groups",
+          "refs": [
+            {"title": "Kafka: conceptos principales", "url": "https://kafka.apache.org/documentation/#intro_concepts_and_terms"}
+          ]
+        },
+        {
+          "id": "5.3",
+          "name": "Acknowledgement, back-pressure y DLQ",
+          "refs": [
+            {"title": "RabbitMQ: confirmaciones y acks", "url": "https://www.rabbitmq.com/docs/confirms"},
+            {"title": "RabbitMQ: dead letter exchanges", "url": "https://www.rabbitmq.com/docs/dlx"}
+          ]
+        },
+        {
+          "id": "5.4",
+          "name": "Patrones de mensajería y desacoplamiento",
+          "refs": [
+            {"title": "Enterprise Integration Patterns: mensajería", "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Relojes lógicos",
+      "weight": 5,
+      "objectives": [
+        {
+          "id": "6.1",
+          "name": "Relojes de Lamport y happened-before",
+          "refs": [
+            {"title": "Lamport (1978): Time, Clocks and the Ordering of Events", "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf"}
+          ]
+        },
+        {
+          "id": "6.2",
+          "name": "Relojes vectoriales",
+          "refs": [
+            {"title": "Vector clock", "url": "https://en.wikipedia.org/wiki/Vector_clock"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Almacenamiento distribuido",
+      "weight": 8,
+      "objectives": [
+        {
+          "id": "7.1",
+          "name": "Sharding y DHT (Chord)",
+          "refs": [
+            {"title": "Paper de Chord (SIGCOMM 2001)", "url": "https://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf"}
+          ]
+        },
+        {
+          "id": "7.2",
+          "name": "WAL, read repair y event sourcing",
+          "refs": [
+            {"title": "PostgreSQL: Write-Ahead Logging", "url": "https://www.postgresql.org/docs/current/wal-intro.html"},
+            {"title": "Martin Fowler: Event Sourcing", "url": "https://martinfowler.com/eaaDev/EventSourcing.html"},
+            {"title": "Paper de Amazon Dynamo", "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Patrones, conceptos adicionales e IPC",
+      "weight": 7,
+      "objectives": [
+        {
+          "id": "8.1",
+          "name": "Saga vs 2PC, UUID y gossip",
+          "refs": [
+            {"title": "Patrón Saga", "url": "https://microservices.io/patterns/data/saga.html"},
+            {"title": "RFC 9562: UUID", "url": "https://www.rfc-editor.org/rfc/rfc9562"}
+          ]
+        },
+        {
+          "id": "8.2",
+          "name": "Fundamentos de sistemas distribuidos e IPC local vs remota",
+          "refs": [
+            {"title": "Beej's Guide to Unix IPC", "url": "https://beej.us/guide/bgipc/"},
+            {"title": "Beej's Guide to Network Programming", "url": "https://beej.us/guide/bgnet/"}
+          ]
+        }
+      ]
+    }
+  ]
+}

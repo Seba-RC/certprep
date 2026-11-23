@@ -1,6 +1,7 @@
 import * as E from './engine.js';
 import * as store from './store.js';
 import * as sync from './sync.js';
+import { richBlock, richInline, codeBlocks } from './richtext.js';
 
 const $main = document.getElementById('main');
 const $nav = document.getElementById('topnav');
@@ -275,7 +276,7 @@ function viewDashboard(cert) {
       <div class="dash-head" style="--cert:${h(cert.accent)}">
         <div>
           <h1 class="page-title">${h(cert.name)}</h1>
-          <p class="muted">${h(cert.examGuideVersion || '')}. ${qs.length} questions in the bank. <a href="${h(cert.examGuideUrl)}" target="_blank" rel="noopener">Official exam guide</a></p>
+          <p class="muted">${cert.examGuideVersion ? h(cert.examGuideVersion) + '. ' : ''}${qs.length} questions in the bank.${cert.examGuideUrl ? ` <a href="${h(cert.examGuideUrl)}" target="_blank" rel="noopener">${h(cert.examGuideLabel || 'Official exam guide')}</a>` : ''}</p>
         </div>
       </div>
       ${resume}
@@ -471,9 +472,9 @@ function renderOptions(q, order, selected, reveal, name) {
         <label>
           <input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${h(oid)}" ${isSel ? 'checked' : ''} ${reveal ? 'disabled' : ''}>
           <span class="bubble" aria-hidden="true">${letter}</span>
-          <span class="opt-text">${h(o.text)}</span>
+          <span class="opt-text">${richInline(o.text)}</span>
         </label>
-        ${reveal ? `<div class="fb"><strong>${verdict}</strong> ${h(o.feedback)}</div>` : ''}
+        ${reveal ? `<div class="fb"><strong>${verdict}</strong> ${richInline(o.feedback)}</div>` : ''}
       </li>`;
   }).join('');
 }
@@ -537,8 +538,8 @@ function viewRun(cert) {
 
   const verdict = reveal
     ? (E.isCorrect(q, sel)
-      ? `<div class="verdict ok" role="status"><b>Correct.</b> ${h(q.takeaway)}</div>`
-      : `<div class="verdict bad" role="status"><b>Not quite.</b> The correct answer${need > 1 ? 's are' : ' is'} marked in green. ${h(q.takeaway)}</div>`)
+      ? `<div class="verdict ok" role="status"><b>Correct.</b> ${richInline(q.takeaway)}</div>`
+      : `<div class="verdict bad" role="status"><b>Not quite.</b> The correct answer${need > 1 ? 's are' : ' is'} marked in green. ${richInline(q.takeaway)}</div>`)
     : '';
 
   $main.innerHTML = `
@@ -550,7 +551,7 @@ function viewRun(cert) {
       ${navGrid}
       <article class="sheet question ${flagged ? 'is-flagged' : ''}">
         ${questionMeta(cert, q)}
-        <h1 class="stem">${h(q.question)}</h1>
+        <div class="stem" role="heading" aria-level="1">${richBlock(q.question)}</div>
         ${need > 1 ? `<p class="hint">Select ${need} answers.</p>` : ''}
         <ul class="opts" role="${need > 1 ? 'group' : 'radiogroup'}" aria-label="Answer options">${renderOptions(q, s.order[qid], sel, reveal, 'opt-' + qid)}</ul>
         ${verdict}
@@ -722,11 +723,12 @@ function reviewItem(cert, q, sel, i, open) {
   const ok = E.isCorrect(q, sel);
   return `
     <details class="rev ${ok ? 'ok' : 'bad'}" ${open ? 'open' : ''}>
-      <summary><span class="mark" aria-hidden="true"></span><span class="rev-n">${i + 1}.</span> <span class="rev-q">${h(q.question)}</span><span class="sr">${ok ? 'correct' : 'incorrect'}</span></summary>
+      <summary><span class="mark" aria-hidden="true"></span><span class="rev-n">${i + 1}.</span> <span class="rev-q">${richInline(q.question, cert.codeMarker || '[code]')}</span><span class="sr">${ok ? 'correct' : 'incorrect'}</span></summary>
       ${questionMeta(cert, q)}
+      ${codeBlocks(q.question)}
       ${!sel.length ? '<p class="muted">You didn\'t answer this one.</p>' : ''}
       <ul class="opts">${renderOptions(q, q.options.map((o) => o.id), sel, true, 'r-' + q.id)}</ul>
-      <div class="verdict ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct.' : 'Key point:'}</b> ${h(q.takeaway)}</div>
+      <div class="verdict ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Correct.' : 'Key point:'}</b> ${richInline(q.takeaway)}</div>
       ${refsFor(cert, q)}
     </details>`;
 }
@@ -789,7 +791,7 @@ function viewBrowse(cert, params) {
       <h1 class="page-title">Question bank</h1>
       <p class="lede">Every question with its answer and the feedback for each option. Looking here before practicing will spoil your score, so it's best for studying topics you've already missed.</p>
       <div class="filters">
-        <label>Search <input type="search" id="q" value="${h(state.search)}" placeholder="Try: Shared VPC, lifecycle, ace-3104"></label>
+        <label>Search <input type="search" id="q" value="${h(state.search)}" placeholder="${h(cert.searchHint || 'Try: Shared VPC, lifecycle, ace-3104')}"></label>
         <label>Section <select id="d"><option value="">All sections</option>${domOpts}</select></label>
         <label>Show <select id="f">
           <option value="all">All</option><option value="unseen">Not answered yet</option>

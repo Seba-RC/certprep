@@ -1,6 +1,11 @@
 # CertPrep
 
-A practice-exam platform for cloud certifications, built to run on AWS for close to nothing. It ships with a **Google Cloud Associate Cloud Engineer (ACE)** bank of **261 questions**. Every answer option has its own feedback, the questions map to the ACE exam guide that took effect on June 30, 2026, and they're spread across the four sections in the same proportions as the real exam.
+A practice-exam platform for certifications and course exams, built to run on AWS for close to nothing. It ships with two banks:
+
+* **Google Cloud Associate Cloud Engineer (ACE)**: 261 questions in English (details below).
+* **Sistemas Distribuidos (Taller de Ciencia de Redes, ICIIT · UDD)**: 170 questions in Spanish (`bank-src/sd-udd/`), written from the exam syllabus (60 questions, 120 min) and the Unidad 1–2 slides. It covers POSIX C (fork, pipes, signals), TCP sockets, Raft, consistency and replication, message queues, logical clocks, distributed storage and patterns, with sections weighted like the syllabus (25/13/13/12/17/5/8/7). The mock exam is 60 questions in 120 minutes.
+
+The ACE bank has **261 questions**. Every answer option has its own feedback, the questions map to the ACE exam guide that took effect on June 30, 2026, and they're spread across the four sections in the same proportions as the real exam.
 
 > **About the questions:** these are original, exam-style questions written against Google's public exam guide. Google keeps real exam questions confidential under its certification agreement, and sites that claim to have "real questions" are publishing leaked dumps, so none of those were used. The questions copy the real exam's format: scenario-based "what should you do?" items, single and multiple select, and "Choose two" questions.
 
@@ -103,7 +108,7 @@ Local mode uses browser storage. To test sign-in locally against a deployed stac
 cd backend && npm install && npm test
 ```
 
-There are 14 tests. They cover bank validity, scoring (exact match for multi-select), exam weighting, spaced repetition, practice selection, stats, client/server merge agreement, and the Lambda (auth, validation, merge-on-PUT, per-user isolation, delete). `pip install cfn-lint && cfn-lint template.yaml` lints the template.
+There are 18 tests. They cover bank validity (every bank in `web/banks/`), safe rich-text rendering, accent-insensitive search, scoring (exact match for multi-select), exam weighting, spaced repetition, practice selection, stats, client/server merge agreement, and the Lambda (auth, validation, merge-on-PUT, per-user isolation, delete). `pip install cfn-lint && cfn-lint template.yaml` lints the template.
 
 ## Writing questions
 
@@ -122,6 +127,8 @@ Logs in a bucket should move to Coldline after 30 days and be deleted after 365 
 * `+` marks a correct option and `-` a wrong one. Text after ` :: ` is the feedback for that option.
 * With two or more `+` lines, the stem must include `(Choose two.)` or `(Choose three.)`. The build checks this.
 * `>` is the takeaway shown after answering.
+* Spanish banks can write `(Elige dos.)` / `(Elige tres.)` instead of `(Choose two.)`.
+* A stem can include a fenced code block (```` ```c ```` … ```` ``` ````) that keeps its line breaks and is shown as code. `Backticks` give inline code in stems, options, feedback and takeaways. Everything is HTML-escaped first, so question files can't inject markup.
 * The build validates everything (feedback present, no duplicates, known objectives) and shuffles option order deterministically, so answer letters stay balanced. The app can shuffle again each time.
 
 Run `python3 scripts/build_bank.py` to compile to `web/banks/`. It prints counts per section and objective so you can keep the bank weighted like the exam.
@@ -132,7 +139,7 @@ Run `python3 scripts/build_bank.py` to compile to `web/banks/`. It prints counts
 python3 scripts/new_cert.py aws-saa "AWS Certified Solutions Architect – Associate" --vendor AWS --accent "#ff9900"
 ```
 
-Edit `bank-src/aws-saa/cert.json` (domains, weights, objectives with doc links, exam length, time and pass mark), write questions, and run the build. The new certification appears on the home page automatically, and progress, sync, mock exams and stats all work per certification with no code changes.
+Edit `bank-src/aws-saa/cert.json` (domains, weights, objectives with doc links, exam length, time and pass mark; optional `searchHint` and `codeMarker` for non-English banks, and leave `examGuideUrl` empty if there is no public guide), write questions, and run the build. The new certification appears on the home page automatically, and progress, sync, mock exams and stats all work per certification with no code changes.
 
 ## Project layout
 
@@ -145,8 +152,10 @@ infra/github-deploy.yaml OIDC provider, deploy role, CloudFormation execution ro
 scripts/build_bank.py    Markdown questions -> validated JSON
 scripts/new_cert.py      scaffold a new certification
 bank-src/gcp-ace/        cert.json + 6 question files (261 questions)
+bank-src/sd-udd/         cert.json + 8 question files in Spanish (170 questions)
 web/                     the static app (no build step, vanilla JS modules)
   js/engine.js           scoring, exam builder, spaced repetition, stats, merge (pure, unit-tested)
+  js/richtext.js         safe code-block / inline-code rendering for question text
   js/store.js            localStorage with in-memory fallback
   js/sync.js             Cognito PKCE sign-in + sync API client
   js/app.js              UI and routing
