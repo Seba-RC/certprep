@@ -25,7 +25,15 @@ else
 fi
 
 # An account can only have one GitHub OIDC provider; reuse it if it's already there.
-if aws iam list-open-id-connect-providers --output text --query 'OpenIDConnectProviderList[].Arn' \
+# On a re-run, keep the stack's previous choice: if this stack created the provider,
+# passing "false" now would make CloudFormation delete it.
+PREV="$(aws cloudformation describe-stacks --stack-name "${APP_STACK}-github-deploy" \
+  --query "Stacks[0].Parameters[?ParameterKey=='CreateOidcProvider'].ParameterValue | [0]" \
+  --output text 2>/dev/null || true)"
+if [[ "$PREV" == "true" || "$PREV" == "false" ]]; then
+  CREATE="$PREV"
+  echo "==> Stack already exists; keeping CreateOidcProvider=$CREATE."
+elif aws iam list-open-id-connect-providers --output text --query 'OpenIDConnectProviderList[].Arn' \
     | tr '\t' '\n' | grep -q 'token.actions.githubusercontent.com$'; then
   CREATE=false
   echo "==> GitHub OIDC provider already exists in this account; reusing it."
