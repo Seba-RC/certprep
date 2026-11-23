@@ -92,9 +92,14 @@ export function dueForReview(questions, progress, now = Date.now()) {
   });
 }
 
+/** Lowercase and strip accents so "replicacion" finds "replicación". */
+export function foldText(s) {
+  return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 export function filterQuestions(questions, progress, opts = {}) {
   const { domains, filter = 'all', search = '' } = opts;
-  const term = search.trim().toLowerCase();
+  const term = foldText(search.trim());
   return questions.filter((q) => {
     if (domains && domains.length && !domains.includes(q.domain)) return false;
     const st = statusOf(progress, q.id);
@@ -102,7 +107,7 @@ export function filterQuestions(questions, progress, opts = {}) {
     if (filter === 'wrong' && st !== 'wrong') return false;
     if (filter === 'flagged' && !isFlagged(progress, q.id)) return false;
     if (term) {
-      const hay = (q.id + ' ' + q.question + ' ' + q.tags.join(' ') + ' ' + q.options.map((o) => o.text).join(' ')).toLowerCase();
+      const hay = foldText(q.id + ' ' + q.question + ' ' + q.tags.join(' ') + ' ' + q.options.map((o) => o.text).join(' '));
       if (!hay.includes(term)) return false;
     }
     return true;

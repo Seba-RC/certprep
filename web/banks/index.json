@@ -9,6 +9,16 @@
       "description": "Original, exam-style practice questions mapped to the Associate Cloud Engineer exam guide that took effect on June 30, 2026.",
       "questionCount": 261,
       "accent": "#4285f4"
+    },
+    {
+      "id": "sd-udd",
+      "name": "Sistemas Distribuidos — Taller de Ciencia de Redes",
+      "shortName": "Sistemas Distribuidos",
+      "vendor": "ICIIT · UDD",
+      "level": "Examen",
+      "description": "Preguntas de práctica en español para el examen de Sistemas Distribuidos (60 preguntas de selección múltiple, 120 min). Basadas en el temario del examen y en las Unidades 1 y 2 del curso.",
+      "questionCount": 170,
+      "accent": "#0f8a7a"
     }
   ]
 }
