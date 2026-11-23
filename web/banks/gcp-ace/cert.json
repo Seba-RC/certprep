@@ -1,0 +1,307 @@
+{
+  "id": "gcp-ace",
+  "name": "Google Cloud Associate Cloud Engineer",
+  "shortName": "GCP ACE",
+  "vendor": "Google Cloud",
+  "level": "Associate",
+  "accent": "#4285f4",
+  "description": "Original, exam-style practice questions mapped to the Associate Cloud Engineer exam guide that took effect on June 30, 2026.",
+  "examGuideUrl": "https://cloud.google.com/learn/certification/guides/cloud-engineer",
+  "examGuideVersion": "Exam guide effective June 30, 2026",
+  "exam": {
+    "questions": 50,
+    "durationMinutes": 120,
+    "passPercent": 70,
+    "passNote": "Google does not publish a passing score. 70% is a commonly used target for practice, not an official number.",
+    "format": "50–60 multiple-choice and multiple-select questions in 2 hours (real exam)."
+  },
+  "disclaimer": "These questions are original practice material written against the public exam guide. They are not actual exam questions, which Google keeps confidential.",
+  "domains": [
+    {
+      "id": "1",
+      "name": "Setting up a cloud solution environment",
+      "weight": 20,
+      "objectives": [
+        {
+          "id": "1.1",
+          "name": "Setting up cloud projects and accounts",
+          "refs": [
+            {
+              "title": "Resource hierarchy",
+              "url": "https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy"
+            },
+            {
+              "title": "Organization Policy Service",
+              "url": "https://cloud.google.com/resource-manager/docs/organization-policy/overview"
+            },
+            {
+              "title": "Cloud Asset Inventory",
+              "url": "https://cloud.google.com/asset-inventory/docs/overview"
+            },
+            {
+              "title": "Quotas",
+              "url": "https://cloud.google.com/docs/quotas/overview"
+            },
+            {
+              "title": "Workforce Identity Federation",
+              "url": "https://cloud.google.com/iam/docs/workforce-identity-federation"
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "name": "Managing billing configuration",
+          "refs": [
+            {
+              "title": "Cloud Billing overview",
+              "url": "https://cloud.google.com/billing/docs/concepts"
+            },
+            {
+              "title": "Budgets and budget alerts",
+              "url": "https://cloud.google.com/billing/docs/how-to/budgets"
+            },
+            {
+              "title": "Export billing data to BigQuery",
+              "url": "https://cloud.google.com/billing/docs/how-to/export-data-bigquery"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Planning and implementing a cloud solution",
+      "weight": 30,
+      "objectives": [
+        {
+          "id": "2.1",
+          "name": "Planning and implementing compute resources",
+          "refs": [
+            {
+              "title": "Choose a compute option",
+              "url": "https://cloud.google.com/docs/choosing-a-compute-option"
+            },
+            {
+              "title": "Managed instance groups",
+              "url": "https://cloud.google.com/compute/docs/instance-groups"
+            },
+            {
+              "title": "Spot VMs",
+              "url": "https://cloud.google.com/compute/docs/instances/spot"
+            },
+            {
+              "title": "GKE Autopilot overview",
+              "url": "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview"
+            },
+            {
+              "title": "Eventarc overview",
+              "url": "https://cloud.google.com/eventarc/docs/overview"
+            }
+          ]
+        },
+        {
+          "id": "2.2",
+          "name": "Planning and implementing storage and data solutions",
+          "refs": [
+            {
+              "title": "Cloud Storage classes",
+              "url": "https://cloud.google.com/storage/docs/storage-classes"
+            },
+            {
+              "title": "Google Cloud databases",
+              "url": "https://cloud.google.com/products/databases"
+            },
+            {
+              "title": "Storage Transfer Service",
+              "url": "https://cloud.google.com/storage-transfer/docs/overview"
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "name": "Planning and implementing networking resources",
+          "refs": [
+            {
+              "title": "VPC overview",
+              "url": "https://cloud.google.com/vpc/docs/vpc"
+            },
+            {
+              "title": "Cloud NGFW firewall policies",
+              "url": "https://cloud.google.com/firewall/docs/firewall-policies-overview"
+            },
+            {
+              "title": "Choose a load balancer",
+              "url": "https://cloud.google.com/load-balancing/docs/choosing-load-balancer"
+            },
+            {
+              "title": "Hybrid connectivity",
+              "url": "https://cloud.google.com/network-connectivity/docs/how-to/choose-product"
+            }
+          ]
+        },
+        {
+          "id": "2.4",
+          "name": "Planning and implementing resources using tooling",
+          "refs": [
+            {
+              "title": "Terraform on Google Cloud",
+              "url": "https://cloud.google.com/docs/terraform"
+            },
+            {
+              "title": "Config Connector",
+              "url": "https://cloud.google.com/config-connector/docs/overview"
+            },
+            {
+              "title": "Application Design Center",
+              "url": "https://cloud.google.com/application-design-center/docs/overview"
+            },
+            {
+              "title": "Gemini Cloud Assist",
+              "url": "https://cloud.google.com/gemini/docs/cloud-assist/overview"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Ensuring successful operation of a cloud solution",
+      "weight": 30,
+      "objectives": [
+        {
+          "id": "3.1",
+          "name": "Managing compute resources",
+          "refs": [
+            {
+              "title": "Snapshots",
+              "url": "https://cloud.google.com/compute/docs/disks/snapshots"
+            },
+            {
+              "title": "GKE node pools",
+              "url": "https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools"
+            },
+            {
+              "title": "Cloud Run revisions and traffic",
+              "url": "https://cloud.google.com/run/docs/rollouts-rollbacks-traffic-migration"
+            }
+          ]
+        },
+        {
+          "id": "3.2",
+          "name": "Managing storage and data solutions",
+          "refs": [
+            {
+              "title": "Object Lifecycle Management",
+              "url": "https://cloud.google.com/storage/docs/lifecycle"
+            },
+            {
+              "title": "Cloud SQL backups",
+              "url": "https://cloud.google.com/sql/docs/mysql/backup-recovery/backups"
+            },
+            {
+              "title": "BigQuery pricing and dry runs",
+              "url": "https://cloud.google.com/bigquery/docs/estimate-costs"
+            },
+            {
+              "title": "CMEK",
+              "url": "https://cloud.google.com/kms/docs/cmek"
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "name": "Managing networking resources",
+          "refs": [
+            {
+              "title": "Expand a subnet range",
+              "url": "https://cloud.google.com/vpc/docs/create-modify-vpc-networks#expand-subnet"
+            },
+            {
+              "title": "Reserve static IPs",
+              "url": "https://cloud.google.com/vpc/docs/reserve-static-external-ip-address"
+            },
+            {
+              "title": "Cloud NAT",
+              "url": "https://cloud.google.com/nat/docs/overview"
+            },
+            {
+              "title": "Cloud DNS",
+              "url": "https://cloud.google.com/dns/docs/overview"
+            }
+          ]
+        },
+        {
+          "id": "3.4",
+          "name": "Monitoring and logging",
+          "refs": [
+            {
+              "title": "Alerting overview",
+              "url": "https://cloud.google.com/monitoring/alerts"
+            },
+            {
+              "title": "Routing and storage (sinks, log buckets)",
+              "url": "https://cloud.google.com/logging/docs/routing/overview"
+            },
+            {
+              "title": "Cloud Audit Logs",
+              "url": "https://cloud.google.com/logging/docs/audit"
+            },
+            {
+              "title": "Ops Agent",
+              "url": "https://cloud.google.com/stackdriver/docs/solutions/agents/ops-agent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Configuring access and security",
+      "weight": 20,
+      "objectives": [
+        {
+          "id": "4.1",
+          "name": "Managing Identity and Access Management (IAM)",
+          "refs": [
+            {
+              "title": "IAM overview",
+              "url": "https://cloud.google.com/iam/docs/overview"
+            },
+            {
+              "title": "Roles and permissions",
+              "url": "https://cloud.google.com/iam/docs/roles-overview"
+            },
+            {
+              "title": "Custom roles",
+              "url": "https://cloud.google.com/iam/docs/creating-custom-roles"
+            }
+          ]
+        },
+        {
+          "id": "4.2",
+          "name": "Managing service accounts",
+          "refs": [
+            {
+              "title": "Service accounts overview",
+              "url": "https://cloud.google.com/iam/docs/service-account-overview"
+            },
+            {
+              "title": "Service account impersonation",
+              "url": "https://cloud.google.com/iam/docs/service-account-impersonation"
+            },
+            {
+              "title": "Workload Identity Federation for GKE",
+              "url": "https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity"
+            },
+            {
+              "title": "Workload Identity Federation",
+              "url": "https://cloud.google.com/iam/docs/workload-identity-federation"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "questionCount": 261,
+  "questionsFile": "questions.json"
+}

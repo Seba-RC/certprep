@@ -1,0 +1,8 @@
+{
+  "apiUrl": "",
+  "cognito": {
+    "domain": "",
+    "clientId": "",
+    "region": ""
+  }
+}
