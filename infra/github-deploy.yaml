@@ -12,6 +12,16 @@ Parameters:
   GitHubRepo:
     Type: String
     Default: certprep
+  GitHubOwnerId:
+    Type: String
+    Default: ""
+    Description: >
+      Numeric GitHub ID of the owner (api.github.com/repos/OWNER/REPO -> owner.id). GitHub can send
+      the OIDC subject as repo:OWNER@OWNER_ID/REPO@REPO_ID:...; with both IDs set, that form is accepted too.
+  GitHubRepoId:
+    Type: String
+    Default: ""
+    Description: Numeric GitHub ID of the repository (api.github.com/repos/OWNER/REPO -> id).
   Branch:
     Type: String
     Default: main
@@ -30,6 +40,9 @@ Parameters:
 
 Conditions:
   MakeProvider: !Equals [!Ref CreateOidcProvider, "true"]
+  HasIds: !And
+    - !Not [!Equals [!Ref GitHubOwnerId, ""]]
+    - !Not [!Equals [!Ref GitHubRepoId, ""]]
 
 Resources:
   GitHubOidcProvider:
@@ -158,7 +171,13 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepo}:ref:refs/heads/${Branch}"
+                # GitHub may send either subject format; the ID form survives renames and can't be
+                # claimed by someone who later takes over the same owner/repo name.
+                token.actions.githubusercontent.com:sub: !If
+                  - HasIds
+                  - - !Sub "repo:${GitHubOwner}/${GitHubRepo}:ref:refs/heads/${Branch}"
+                    - !Sub "repo:${GitHubOwner}@${GitHubOwnerId}/${GitHubRepo}@${GitHubRepoId}:ref:refs/heads/${Branch}"
+                  - !Sub "repo:${GitHubOwner}/${GitHubRepo}:ref:refs/heads/${Branch}"
       Policies:
         - PolicyName: deploy-certprep
           PolicyDocument:
