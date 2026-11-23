@@ -24,8 +24,15 @@ else
   echo "    Set GITHUB_OWNER_ID and GITHUB_REPO_ID and run again if deploys fail with AssumeRoleWithWebIdentity." >&2
 fi
 
-# An account can only have one GitHub OIDC provider; reuse it if it's already there.
-if aws iam list-open-id-connect-providers --output text --query 'OpenIDConnectProviderList[].Arn' \
+# An account can only have one GitHub OIDC provider.
+#  * If this stack already manages it, keep it (passing "false" would make CloudFormation delete it).
+#  * If it exists outside this stack, reuse it.
+#  * Otherwise, create it.
+if aws cloudformation describe-stack-resource --stack-name "${APP_STACK}-github-deploy" \
+    --logical-resource-id GitHubOidcProvider >/dev/null 2>&1; then
+  CREATE=true
+  echo "==> This stack manages the GitHub OIDC provider; keeping it."
+elif aws iam list-open-id-connect-providers --output text --query 'OpenIDConnectProviderList[].Arn' \
     | tr '\t' '\n' | grep -q 'token.actions.githubusercontent.com$'; then
   CREATE=false
   echo "==> GitHub OIDC provider already exists in this account; reusing it."
