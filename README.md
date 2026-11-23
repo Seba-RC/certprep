@@ -66,6 +66,27 @@ After editing questions or the UI, run `./scripts/deploy.sh --site-only` to rebu
 
 **Tear down:** `sam delete --stack-name certprep`. The DynamoDB table is set to `Retain` so progress isn't deleted by accident. Delete it in the console if you want it gone. You may need to empty the S3 bucket first, since it's versioned.
 
+## Automatic deploys from GitHub
+
+The repo includes a GitHub Actions workflow (`.github/workflows/deploy.yml`):
+
+* **Every push and pull request** runs the checks: question-bank validation, the unit tests, and `cfn-lint`.
+* **Every push to `main`** then deploys. If `template.yaml` or `backend/src/` changed, it runs `sam deploy` for the full stack first. Otherwise it only rebuilds and publishes the website, which takes about a minute.
+* **Run workflow** on the Actions tab lets you redeploy by hand. Tick "full deploy" to force a stack deploy.
+
+GitHub signs in to AWS through OIDC, so no AWS keys are stored in GitHub. Only workflows running on `main` in `Seba-RC/certprep` can assume the deploy role. That role can start CloudFormation deploys, upload files and clear the CDN cache. The actual resource changes run through a separate execution role that only CloudFormation can use, and it's limited to the app stack's `certprep-*` resources.
+
+**One-time setup:**
+
+1. In CloudShell (us-east-1), from the `certprep` folder, run:
+   ```bash
+   ./scripts/setup_github_deploy.sh
+   ```
+   This creates the `certprep-github-deploy` stack (`infra/github-deploy.yaml`), which contains the OIDC provider (if your account doesn't have one yet), the two roles, and an artifacts bucket. It prints your AWS account ID at the end.
+2. In GitHub, go to **Settings → Secrets and variables → Actions → Variables** and add a repository variable named `AWS_ACCOUNT_ID` set to that account ID.
+
+Until that variable exists, the workflow runs the checks and skips the deploy. The region, stack name and Cognito prefix are set in the workflow's `env:` block. Edit them there if they ever change.
+
 ## Run locally
 
 ```bash
@@ -118,6 +139,9 @@ Edit `bank-src/aws-saa/cert.json` (domains, weights, objectives with doc links, 
 ```
 template.yaml            SAM/CloudFormation: S3, CloudFront+OAC, Cognito, HTTP API, Lambda, DynamoDB
 scripts/deploy.sh        build + deploy + upload + invalidate
+scripts/setup_github_deploy.sh  one-time: let GitHub Actions deploy (OIDC)
+infra/github-deploy.yaml OIDC provider, deploy role, CloudFormation execution role, artifacts bucket
+.github/workflows/       checks on every push/PR, auto-deploy from main
 scripts/build_bank.py    Markdown questions -> validated JSON
 scripts/new_cert.py      scaffold a new certification
 bank-src/gcp-ace/        cert.json + 6 question files (261 questions)

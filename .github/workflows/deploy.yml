@@ -1,0 +1,133 @@
+name: Test and deploy
+
+# Every push and pull request runs the checks. Pushes to main also deploy:
+#  - changes to template.yaml or backend/src/ -> full stack deploy (sam deploy), then the site
+#  - anything else (questions, web app)       -> site-only deploy (rebuild bank, upload, invalidate)
+# Run it by hand from the Actions tab with "full deploy" ticked to force a stack deploy.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      full_deploy:
+        description: Also deploy the AWS stack (not just the website)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  STACK_NAME: certprep
+  AUTH_DOMAIN_PREFIX: certprep-sebastian-2026
+
+jobs:
+  test:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Validate question bank
+        run: python3 scripts/build_bank.py --check
+
+      - name: Unit tests (engine + Lambda)
+        working-directory: backend
+        run: |
+          npm ci
+          npm test
+
+      - name: Lint CloudFormation templates
+        run: |
+          pip install --quiet cfn-lint
+          cfn-lint template.yaml infra/github-deploy.yaml
+
+  deploy:
+    name: Deploy to AWS
+    needs: test
+    # Deploys only from main, and only once the AWS side is set up (see README: "Automatic deploys").
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.AWS_ACCOUNT_ID != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # lets the job request an OIDC token to sign in to AWS
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Decide what to deploy
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          FORCE_FULL: ${{ inputs.full_deploy }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          full=false
+          if [ "$EVENT" = "workflow_dispatch" ] && [ "$FORCE_FULL" = "true" ]; then
+            full=true
+          elif [ "$EVENT" = "push" ]; then
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
+               || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+              full=true
+            elif git diff --name-only "$BEFORE" "$GITHUB_SHA" | grep -qE '^(template\.yaml|backend/src/)'; then
+              full=true
+            fi
+          fi
+          echo "full=$full" >> "$GITHUB_OUTPUT"
+          if [ "$full" = "true" ]; then echo "Plan: full stack deploy + website"; else echo "Plan: website only"; fi
+
+      - name: Sign in to AWS (OIDC, no stored keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/${{ env.STACK_NAME }}-github-deploy
+          role-session-name: certprep-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up SAM CLI
+        if: steps.plan.outputs.full == 'true'
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Deploy stack
+        if: steps.plan.outputs.full == 'true'
+        run: |
+          sam deploy \
+            --stack-name "$STACK_NAME" \
+            --region "$AWS_REGION" \
+            --s3-bucket "${STACK_NAME}-artifacts-${ACCOUNT_ID}-${AWS_REGION}" \
+            --s3-prefix "$STACK_NAME" \
+            --role-arn "arn:aws:iam::${ACCOUNT_ID}:role/${STACK_NAME}-cfn-exec" \
+            --capabilities CAPABILITY_IAM \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              EnableSync=true \
+              "AuthDomainPrefix=${AUTH_DOMAIN_PREFIX}" \
+              PriceClass=PriceClass_100
+
+      - name: Publish website
+        run: ./scripts/deploy.sh --site-only
